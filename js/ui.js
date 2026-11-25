@@ -399,8 +399,17 @@
 
   $('setSound').onchange = (e) => { S.d.settings.sound = e.target.checked; SC.Audio.setEnabled(e.target.checked); S.save(); SC.Audio.click(); };
   $('setVib').onchange = (e) => { S.d.settings.vibrate = e.target.checked; SC.Audio.setVibrate(e.target.checked); S.save(); };
+  let resetArmed = 0;
   $('btnReset').onclick = () => {
-    if (!confirm('Sigur ștergi tot progresul? Orașul, monedele și stelele vor dispărea.')) return;
+    const btn = $('btnReset');
+    if (Date.now() - resetArmed > 3000) {
+      resetArmed = Date.now();
+      btn.textContent = '⚠️ Apasă din nou ca să ștergi tot';
+      setTimeout(() => (btn.textContent = '🗑️ Resetează progresul'), 3000);
+      return;
+    }
+    resetArmed = 0;
+    btn.textContent = '🗑️ Resetează progresul';
     S.reset();
     SC.Audio.setEnabled(true); SC.Audio.setVibrate(true);
     toast('Progres resetat.');
@@ -441,6 +450,6 @@
   show('menu');
 
   if ('serviceWorker' in navigator && location.protocol.startsWith('http')) {
-    navigator.serviceWorker.register('sw.js').catch(() => {});
+    try { navigator.serviceWorker.register('sw.js').catch(() => {}); } catch (e) {}
   }
 })();
