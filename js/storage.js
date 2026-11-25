@@ -12,7 +12,7 @@ SC.Save = (function () {
       missions: {},          // index -> stele (1..3)
       best: { floors: 0, pop: 0 },
       stats: { blocks: 0, perfects: 0, games: 0 },
-      settings: { sound: true, vibrate: true },
+      settings: { sound: true, vibrate: true, craneSpeed: 1 },
       seenHelp: false,
     };
   }

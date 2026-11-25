@@ -1,5 +1,5 @@
 // Service worker: permite jocul offline după prima deschidere
-const CACHE = 'skystack-v1';
+const CACHE = 'skystack-v2';
 const FILES = [
   './', 'index.html', 'style.css', 'manifest.webmanifest', 'icon.svg',
   'js/data.js', 'js/audio.js', 'js/storage.js', 'js/game.js', 'js/ui.js',

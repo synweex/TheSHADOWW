@@ -36,8 +36,12 @@
 
   // ---------- Meniu ----------
   function renderMenu() {
-    $('menuPop').textContent = S.cityPop();
+    const pop = S.cityPop();
+    $('menuPop').textContent = pop;
     $('menuBest').textContent = S.d.best.floors;
+    $('menuCityInfo').textContent = `${SC.rankFor(pop).rank.name} · ${pop} locuitori`;
+    const stars = Object.values(S.d.missions).reduce((a, b) => a + b, 0);
+    $('menuMisInfo').textContent = `⭐ ${stars} / ${SC.MISSIONS.length * 3}`;
     if (!playing) game.reset({ mode: 'idle' });
   }
 
@@ -47,6 +51,7 @@
     const { rank, next } = SC.rankFor(pop);
     $('cityRank').textContent = '🏙️ ' + rank.name;
     $('cityNext').textContent = next ? `Următorul rang: ${next.name} la ${next.pop} locuitori` : 'Rang maxim atins!';
+    $('rankFill').style.width = (next ? clampPct((pop - rank.pop) / (next.pop - rank.pop)) : 100) + '%';
     $('cityPop').textContent = pop;
     $('cityBuilt').textContent = S.d.lots.filter((l) => l.b && l.b.complete).length;
 
@@ -64,6 +69,7 @@
         const lot = S.d.lots[i];
         const el = document.createElement('button');
         el.className = 'lot';
+        el.style.animationDelay = (i * 0.03) + 's';
         if (!lot.owned) {
           el.classList.add('locked');
           el.innerHTML = `<span class="e">🔒</span><span class="n">${SC.lotCost(i)} 🪙</span>`;
@@ -214,7 +220,8 @@
       total += stars;
       const unlocked = i === 0 || (S.d.missions[i - 1] || 0) > 0;
       const el = document.createElement('button');
-      el.className = 'mis' + (unlocked ? '' : ' locked') + (stars ? ' done' : '');
+      el.className = 'mis' + (unlocked ? '' : ' locked') + (stars ? ' done' : '') + (unlocked && !stars ? ' next' : '');
+      el.style.animationDelay = Math.min(i * 0.035, 0.5) + 's';
       const tags = missionTags(m);
       el.innerHTML = `<div class="num">${unlocked ? i + 1 : '🔒'}</div>
         <div class="info"><b>${m.name}</b><small>${m.desc}</small>${tags ? `<div class="tags">${tags}</div>` : ''}</div>
@@ -322,26 +329,49 @@
 
     $('resTitle').textContent = title;
     $('resSub').textContent = sub;
-    $('resStars').textContent = stars ? '⭐'.repeat(stars) + '☆'.repeat(3 - stars) : '';
-    $('resGrid').innerHTML = grid.map(([e, v, l]) => `<div><b>${e} ${v}</b><small>${l}</small></div>`).join('');
-    $('resCoins').textContent = `+${coins} 🪙`;
+    $('resStars').innerHTML = stars || r.mode !== 'endless' && r.win
+      ? [0, 1, 2].map((k) => `<span class="${k < stars ? '' : 'off'}" style="animation-delay:${0.35 + k * 0.22}s">⭐</span>`).join('')
+      : '';
+    $('resGrid').innerHTML = grid.map(([e, v, l], k) => `<div style="animation-delay:${0.1 + k * 0.06}s"><b>${e} ${v}</b><small>${l}</small></div>`).join('');
+    countUp($('resCoins'), coins);
     $('resRecord').classList.toggle('hidden', !record);
     const hasNext = r.mode === 'mission' && r.win && cfg.missionIdx + 1 < SC.MISSIONS.length;
     $('btnNext').classList.toggle('hidden', !hasNext);
     $('btnAgain').textContent = r.mode === 'city' ? '🔄 Construiește din nou' : '🔄 Încă o dată';
     $('btnBack').textContent = r.mode === 'city' ? '🏙️ Înapoi în oraș' : r.mode === 'mission' ? '🎯 Misiuni' : '🏠 Meniu';
-    if (coins) setTimeout(() => SC.Audio.coin(), 250);
+    if (stars) for (let k = 0; k < stars; k++) setTimeout(() => SC.Audio.perfect(k * 3), 350 + k * 220);
+    else if (coins) setTimeout(() => SC.Audio.coin(), 250);
     show('result');
+  }
+
+  function clampPct(x) { return Math.max(0, Math.min(100, Math.round(x * 100))); }
+
+  // numără monedele câștigate de la 0 în sus
+  function countUp(el, value) {
+    const t0 = performance.now(), dur = 900;
+    const tick = (now) => {
+      const k = Math.min(1, (now - t0) / dur);
+      el.innerHTML = `+${Math.round(value * (1 - Math.pow(1 - k, 3)))}<i class="ico coin"></i>`;
+      if (k < 1) requestAnimationFrame(tick);
+    };
+    el.innerHTML = `+0<i class="ico coin"></i>`;
+    setTimeout(() => requestAnimationFrame(tick), 300);
   }
 
   // ---------- HUD ----------
   let hudCache = {};
   function setText(id, v, cls) {
     if (hudCache[id] === v) return;
+    const had = id in hudCache;
     hudCache[id] = v;
     const el = $(id);
     el.textContent = v;
     if (cls !== undefined) el.classList.toggle('warn', cls);
+    if (had && (id === 'hudFloors' || id === 'hudPop' || id === 'hudLives')) {
+      const target = id === 'hudLives' ? el : el.parentElement;
+      const cl = id === 'hudLives' ? 'shake' : 'bump';
+      target.classList.remove(cl); void target.offsetWidth; target.classList.add(cl);
+    }
   }
 
   function updateHud() {
@@ -370,6 +400,7 @@
   function renderSettings() {
     $('setSound').checked = S.d.settings.sound;
     $('setVib').checked = S.d.settings.vibrate;
+    document.querySelectorAll('#setSpeed button').forEach((b) => b.classList.toggle('on', +b.dataset.v === (S.d.settings.craneSpeed || 1)));
     const st = S.d.stats;
     $('statsBox').innerHTML = `📦 Blocuri puse: <b>${st.blocks}</b><br>🎯 Perfecte: <b>${st.perfects}</b><br>🎮 Jocuri: <b>${st.games}</b><br>🚀 Record Endless: <b>${S.d.best.floors}</b> etaje (${SC.formatAlt(SC.altitude(S.d.best.floors))})`;
   }
@@ -398,6 +429,9 @@
   $('btnBack').onclick = () => { SC.Audio.click(); game.reset({ mode: 'idle' }); show(returnTo); };
 
   $('setSound').onchange = (e) => { S.d.settings.sound = e.target.checked; SC.Audio.setEnabled(e.target.checked); S.save(); SC.Audio.click(); };
+  document.querySelectorAll('#setSpeed button').forEach((b) => b.addEventListener('click', () => {
+    S.d.settings.craneSpeed = +b.dataset.v; S.save(); SC.Audio.click(); renderSettings();
+  }));
   $('setVib').onchange = (e) => { S.d.settings.vibrate = e.target.checked; SC.Audio.setVibrate(e.target.checked); S.save(); };
   let resetArmed = 0;
   $('btnReset').onclick = () => {
