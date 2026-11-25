@@ -60,7 +60,7 @@
       <div class="mode-row">
         <button class="mode-card m-city" data-go="city">
           <svg class="mode-ic" viewBox="0 0 48 40"><rect x="2" y="16" width="12" height="22" rx="2" fill="#fff" opacity=".7"/><rect x="16" y="4" width="14" height="34" rx="2" fill="#fff"/><rect x="32" y="12" width="12" height="26" rx="2" fill="#fff" opacity=".85"/><g fill="#2e9e4e"><rect x="19" y="9" width="3" height="4"/><rect x="24" y="9" width="3" height="4"/><rect x="19" y="16" width="3" height="4"/><rect x="24" y="16" width="3" height="4"/><rect x="19" y="23" width="3" height="4"/><rect x="24" y="23" width="3" height="4"/><rect x="35" y="17" width="3" height="3"/><rect x="5" y="21" width="3" height="3"/></g></svg>
-          <b>Orașul meu</b><small id="menuCityInfo">Sat · 0 locuitori</small>
+          <b>Orașul meu</b><small id="menuCityInfo">Sat · 0 locuitori</small><span class="badge hidden" id="menuBadge">!</span>
         </button>
         <button class="mode-card m-mis" data-go="missions">
           <svg class="mode-ic" viewBox="0 0 40 40"><circle cx="20" cy="20" r="17" fill="#fff"/><circle cx="20" cy="20" r="11.5" fill="#2f7fd6"/><circle cx="20" cy="20" r="6" fill="#fff"/><circle cx="20" cy="20" r="2.5" fill="#2f7fd6"/></svg>
@@ -84,11 +84,25 @@
         <span class="pill">🪙 <b class="coins">0</b></span>
       </div>
       <canvas id="cityView"></canvas>
+      <div class="treasury">
+        <div class="tr-info">
+          <div class="tr-top"><span>🏦 Trezorerie</span><b id="trAmount">0</b></div>
+          <div class="tr-bar"><i id="trFill"></i></div>
+          <div class="tr-sub"><span id="trRate">+0/min</span><span id="trCap">capacitate 0</span></div>
+        </div>
+        <button class="collect-btn" id="btnCollect"><i class="ico coin"></i>Colectează</button>
+      </div>
+      <div class="tabs">
+        <button class="tab on" data-tab="lots">🏗️ Clădiri</button>
+        <button class="tab" data-tab="invest">📈 Investiții</button>
+      </div>
       <div class="city-stats">
         <span>👥 <b id="cityPop">0</b> locuitori</span>
-        <span>🏗️ <b id="cityBuilt">0</b>/12 clădiri</span>
+        <span>✖️ venit <b id="cityMult">1</b></span>
+        <span>🏢 <b id="cityBuilt">0</b>/12</span>
       </div>
       <div id="lots" class="scroll"></div>
+      <div id="invest" class="scroll hidden"></div>
     </div>
   </section>
 
@@ -116,7 +130,10 @@
         <li>🏙️ <b>Orașul meu:</b> cumpără loturi, construiește case, blocuri, birouri și zgârie-nori. Crește populația și rangul orașului.</li>
         <li>🎯 <b>Misiuni:</b> provocări cu vânt, timp limită, macara rapidă. Câștigă până la 3 stele.</li>
         <li>🚀 <b>Endless:</b> construiește la nesfârșit — prin nori, stratosferă, până în spațiu și mai departe!</li>
-        <li>🪙 Monedele câștigate le folosești pentru loturi și tipuri noi de clădiri.</li>
+        <li>💰 <b>Tycoon:</b> clădirile aduc chirie în <b>trezorerie</b> chiar și când nu joci. Intră în oraș și apasă <b>Colectează</b> înainte să se umple.</li>
+        <li>🔨 <b>Renovează</b> clădirile (până la nivelul 10) și cumpără <b>Investiții</b>: parcuri, metrou, centrală, seif mai mare, marketing și un primar care strânge banii automat.</li>
+        <li>🚁 Când trece elicopterul peste oraș, atinge-l pentru o livrare bonus!</li>
+        <li>🪙 Monedele le folosești pentru loturi, clădiri noi, renovări și investiții.</li>
       </ul>
       <button class="btn big" data-go="menu">Am înțeles!</button>
     </div>
@@ -177,6 +194,7 @@
 <script src="js/data.js"></script>
 <script src="js/audio.js"></script>
 <script src="js/storage.js"></script>
+<script src="js/tycoon.js"></script>
 <script src="js/game.js"></script>
 <script src="js/ui.js"></script>
 </body>

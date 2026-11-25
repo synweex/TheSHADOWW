@@ -10,6 +10,15 @@ Joc HTML5 (canvas), fără dependențe și fără build. Merge în browserul tel
 - **🎯 Misiuni** — 16 provocări cu până la 3 stele: vânt, timp limită, o singură viață, blocuri înguste, macara rapidă sau care alunecă pe șine, combo-uri, populație țintă.
 - **🚀 Endless** — construiești la nesfârșit. Cu cât urci, cu atât se schimbă cerul: Orașul → Nori (20) → Altitudine de zbor (40) → Stratosferă (60) → **Spațiu** (80) → Orbită joasă → Spre Lună → Planetele → Spațiu adânc → Altă galaxie. Sus, etajele devin module spațiale, gravitația scade, iar curenții de aer și macaraua mobilă îngreunează jocul.
 
+## 💰 Tycoon
+
+- Fiecare clădire aduce **chirie** în trezorerie, în timp real și când jocul e închis (venit = locuitori × chiria tipului × nivel × bonusuri).
+- **Trezoreria** are o capacitate (60 min de venit, +30 min per nivel de Seif): intră și apasă **Colectează** înainte să se umple.
+- **Renovări:** fiecare clădire urcă până la nivelul 10, +50% venit pe nivel.
+- **Investiții:** Parcuri (+10%), Metrou (+15%), Centrală (+25%), Seif mai mare, Marketing (+15% monede din jocuri), Primar automat (colectează singur).
+- **Elicopterul** trece din când în când peste oraș: atinge-l pentru o livrare bonus.
+- La revenire, „Bine ai revenit!” arată cât a câștigat orașul cât ai lipsit.
+
 ## Cum se joacă
 
 - Atinge ecranul (sau Space/Enter pe calculator) ca să lași blocul.

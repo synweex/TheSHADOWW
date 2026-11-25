@@ -4,8 +4,8 @@ window.SC = window.SC || {};
 SC.BUILDINGS = {
   casa:    { name: 'Casă',        emoji: '🏠', floors: 6,  popPer: 8,  cost: 0,    style: 'casa',    desc: 'Mică și cochetă' },
   bloc:    { name: 'Bloc',        emoji: '🏢', floors: 12, popPer: 16, cost: 150,  style: 'bloc',    desc: 'Multe familii' },
-  birouri: { name: 'Birouri',     emoji: '🏬', floors: 20, popPer: 24, cost: 450,  style: 'birouri', desc: 'Sticlă și oțel' },
-  turn:    { name: 'Zgârie-nori', emoji: '🏙️', floors: 32, popPer: 36, cost: 1200, style: 'turn',    desc: 'Mândria orașului' },
+  birouri: { name: 'Birouri',     emoji: '🏬', floors: 20, popPer: 24, cost: 600,  style: 'birouri', desc: 'Sticlă și oțel' },
+  turn:    { name: 'Zgârie-nori', emoji: '🏙️', floors: 32, popPer: 36, cost: 2000, style: 'turn',    desc: 'Mândria orașului' },
 };
 SC.BUILD_ORDER = ['casa', 'bloc', 'birouri', 'turn'];
 
@@ -16,7 +16,7 @@ SC.DISTRICTS = [
   { name: 'Downtown', icon: '🌆' },
 ];
 // Primele 3 loturi sunt gratuite; restul costă monede
-SC.lotCost = (i) => (i < 3 ? 0 : 60 + (i - 3) * 60);
+SC.lotCost = (i) => (i < 3 ? 0 : Math.round(100 * Math.pow(1.6, i - 3) / 10) * 10);
 
 SC.RANKS = [
   { pop: 0,     name: 'Sat' },
