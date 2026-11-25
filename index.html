@@ -1,0 +1,168 @@
+<!DOCTYPE html>
+<html lang="ro">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no, viewport-fit=cover">
+  <meta name="theme-color" content="#16203d">
+  <meta name="mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+  <meta name="description" content="SkyStack City — construiește-ți orașul bloc cu bloc, până la stele.">
+  <link rel="manifest" href="manifest.webmanifest">
+  <link rel="icon" href="icon.svg" type="image/svg+xml">
+  <link rel="apple-touch-icon" href="icon.svg">
+  <title>SkyStack City</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+<div id="app">
+  <canvas id="game"></canvas>
+
+  <!-- HUD în timpul jocului -->
+  <div id="hud" class="hidden">
+    <div class="hud-top">
+      <button id="btnPause" class="icon-btn" aria-label="Pauză">❚❚</button>
+      <div class="hud-stat"><b id="hudFloors">0</b><small id="hudFloorsLbl">etaje</small></div>
+      <div class="hud-stat"><b id="hudPop">0</b><small>locuitori</small></div>
+      <div id="hudLives" class="hud-lives"></div>
+    </div>
+    <div class="hud-sub">
+      <span id="hudGoal" class="chip"></span>
+      <span id="hudAlt" class="chip"></span>
+      <span id="hudTimer" class="chip"></span>
+      <span id="hudWind" class="chip"></span>
+    </div>
+  </div>
+  <div id="tapHint" class="hidden">👆 Atinge ecranul ca să lași blocul</div>
+
+  <!-- Meniu principal -->
+  <section id="scrMenu" class="screen">
+    <div class="menu-wrap">
+      <div class="logo">
+        <div class="logo-top">SkyStack</div>
+        <div class="logo-bot">CITY</div>
+        <div class="tagline">Construiește-ți orașul… până la stele</div>
+      </div>
+      <div class="pill-row">
+        <span class="pill">🪙 <b class="coins">0</b></span>
+        <span class="pill">👥 <b id="menuPop">0</b></span>
+        <span class="pill">🚀 <b id="menuBest">0</b></span>
+      </div>
+      <div class="menu-btns">
+        <button class="btn big b-city" data-go="city">🏙️ Orașul meu</button>
+        <button class="btn big b-mis" data-go="missions">🎯 Misiuni</button>
+        <button class="btn big b-end" id="btnEndless">🚀 Endless — spre spațiu</button>
+        <div class="row2">
+          <button class="btn" data-go="help">❓ Cum se joacă</button>
+          <button class="btn" data-go="settings">⚙️ Setări</button>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Orașul -->
+  <section id="scrCity" class="screen hidden">
+    <div class="panel full">
+      <div class="bar">
+        <button class="icon-btn" data-go="menu" aria-label="Înapoi">←</button>
+        <div class="bar-title">
+          <div id="cityRank">Sat</div>
+          <small id="cityNext"></small>
+        </div>
+        <span class="pill">🪙 <b class="coins">0</b></span>
+      </div>
+      <canvas id="cityView"></canvas>
+      <div class="city-stats">
+        <span>👥 <b id="cityPop">0</b> locuitori</span>
+        <span>🏗️ <b id="cityBuilt">0</b>/12 clădiri</span>
+      </div>
+      <div id="lots" class="scroll"></div>
+    </div>
+  </section>
+
+  <!-- Misiuni -->
+  <section id="scrMissions" class="screen hidden">
+    <div class="panel full">
+      <div class="bar">
+        <button class="icon-btn" data-go="menu" aria-label="Înapoi">←</button>
+        <div class="bar-title"><div>Misiuni</div><small id="misStars"></small></div>
+        <span class="pill">🪙 <b class="coins">0</b></span>
+      </div>
+      <div id="missionList" class="scroll"></div>
+    </div>
+  </section>
+
+  <!-- Ajutor -->
+  <section id="scrHelp" class="screen hidden">
+    <div class="panel card">
+      <h2>Cum se joacă</h2>
+      <ul class="help">
+        <li>👆 <b>Atinge ecranul</b> ca macaraua să lase blocul.</li>
+        <li>🎯 Aliniază blocul peste cel de dedesubt. Centrat = <b>PERFECT</b>, mai mulți locuitori și combo!</li>
+        <li>💔 Dacă blocul cade pe lângă, pierzi o viață. Ai 3 vieți (de obicei).</li>
+        <li>🌬️ Turnul se balansează din ce în ce mai tare — prinde momentul bun. Plasările perfecte îl liniștesc.</li>
+        <li>🏙️ <b>Orașul meu:</b> cumpără loturi, construiește case, blocuri, birouri și zgârie-nori. Crește populația și rangul orașului.</li>
+        <li>🎯 <b>Misiuni:</b> provocări cu vânt, timp limită, macara rapidă. Câștigă până la 3 stele.</li>
+        <li>🚀 <b>Endless:</b> construiește la nesfârșit — prin nori, stratosferă, până în spațiu și mai departe!</li>
+        <li>🪙 Monedele câștigate le folosești pentru loturi și tipuri noi de clădiri.</li>
+      </ul>
+      <button class="btn big" data-go="menu">Am înțeles!</button>
+    </div>
+  </section>
+
+  <!-- Setări -->
+  <section id="scrSettings" class="screen hidden">
+    <div class="panel card">
+      <h2>Setări</h2>
+      <label class="toggle"><span>🔊 Sunet</span><input type="checkbox" id="setSound"><i></i></label>
+      <label class="toggle"><span>📳 Vibrații</span><input type="checkbox" id="setVib"><i></i></label>
+      <div class="stats" id="statsBox"></div>
+      <button class="btn danger" id="btnReset">🗑️ Resetează progresul</button>
+      <button class="btn big" data-go="menu">Înapoi</button>
+    </div>
+  </section>
+
+  <!-- Pauză -->
+  <section id="scrPause" class="screen hidden dim">
+    <div class="panel card">
+      <h2>Pauză</h2>
+      <button class="btn big" id="btnResume">▶️ Continuă</button>
+      <button class="btn" id="btnRestart">🔄 Reîncepe</button>
+      <button class="btn" id="btnQuit">🏠 Ieșire</button>
+    </div>
+  </section>
+
+  <!-- Rezultat -->
+  <section id="scrResult" class="screen hidden dim">
+    <div class="panel card">
+      <h2 id="resTitle">Gata!</h2>
+      <div id="resSub" class="sub"></div>
+      <div id="resStars" class="stars"></div>
+      <div id="resGrid" class="res-grid"></div>
+      <div id="resCoins" class="res-coins"></div>
+      <div id="resRecord" class="record hidden">🏆 RECORD NOU!</div>
+      <button class="btn big" id="btnAgain">🔄 Încă o dată</button>
+      <button class="btn hidden" id="btnNext">⏭️ Următoarea misiune</button>
+      <button class="btn" id="btnBack">↩️ Înapoi</button>
+    </div>
+  </section>
+
+  <!-- Modal: alege clădirea pentru un lot -->
+  <div id="modal" class="modal hidden">
+    <div class="panel card">
+      <h2 id="modalTitle">Lot</h2>
+      <div id="modalBody"></div>
+      <button class="btn" id="modalClose">Închide</button>
+    </div>
+  </div>
+
+  <div id="toast" class="toast hidden"></div>
+</div>
+
+<script src="js/data.js"></script>
+<script src="js/audio.js"></script>
+<script src="js/storage.js"></script>
+<script src="js/game.js"></script>
+<script src="js/ui.js"></script>
+</body>
+</html>

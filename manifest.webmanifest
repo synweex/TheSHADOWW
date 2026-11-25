@@ -1,0 +1,15 @@
+{
+  "name": "SkyStack City",
+  "short_name": "SkyStack",
+  "description": "Construiește-ți orașul bloc cu bloc, până la stele.",
+  "start_url": "./index.html",
+  "scope": "./",
+  "display": "fullscreen",
+  "orientation": "portrait",
+  "background_color": "#16203d",
+  "theme_color": "#16203d",
+  "lang": "ro",
+  "icons": [
+    { "src": "icon.svg", "sizes": "any", "type": "image/svg+xml", "purpose": "any maskable" }
+  ]
+}
